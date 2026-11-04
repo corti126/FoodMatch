@@ -20,17 +20,28 @@ const historyCollection = (uid) => collection(db, 'users', uid, 'searchHistory')
  * se ordena en el cliente por createdAt descendente.
  */
 export function subscribeSearchHistory(uid, onData, onError) {
+  if (!uid) {
+    onError?.(new Error('UID requerido'))
+    return () => {}
+  }
   const q = query(historyCollection(uid), limit(50))
   return onSnapshot(
     q,
     (snapshot) => {
-      const docs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
-      docs.sort(
-        (a, b) =>
-          (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0) ||
-          (b.createdAt?.nanoseconds ?? 0) - (a.createdAt?.nanoseconds ?? 0),
-      )
-      onData(docs.slice(0, 20))
+      try {
+        const docs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
+        docs.sort(
+          (a, b) => {
+            const aTime = a.createdAt?.seconds ?? 0
+            const bTime = b.createdAt?.seconds ?? 0
+            if (bTime !== aTime) return bTime - aTime
+            return (b.createdAt?.nanoseconds ?? 0) - (a.createdAt?.nanoseconds ?? 0)
+          },
+        )
+        onData(docs.slice(0, 20))
+      } catch (err) {
+        onError?.(err)
+      }
     },
     (error) => {
       console.warn('[Historial] Error al escuchar cambios:', error)

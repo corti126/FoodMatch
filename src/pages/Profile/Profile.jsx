@@ -412,10 +412,22 @@ export default function Profile() {
         </div>
 
         {historyError && (
-          <ErrorMessage
-            title="No pudimos cargar el historial"
-            message="Revisá tu conexión e intentá de nuevo."
-          />
+          <div className="alert alert-warning" role="note">
+            <Icon name="alert" size={18} />
+            <div>
+              <p className="alert-title">No pudimos cargar el historial</p>
+              <p>
+                Revisá tu conexión e intentá de nuevo.
+              </p>
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => window.location.reload()}
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
         )}
 
         {historyLoading ? (

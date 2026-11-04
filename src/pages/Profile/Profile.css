@@ -84,6 +84,43 @@
   gap: 8px;
 }
 
+.profile__chips label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition),
+    border-color var(--transition);
+  user-select: none;
+}
+
+.profile__chips label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.profile__chips label.filter-chip--active {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.profile__chips label.filter-chip--active::before {
+  content: '✓';
+  font-size: 0.8rem;
+}
+
 .profile__nutrition {
   display: grid;
   grid-template-columns: 1fr;
