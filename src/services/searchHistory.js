@@ -8,7 +8,6 @@ import {
   getDocs,
   limit,
   onSnapshot,
-  orderBy,
   query,
   serverTimestamp,
 } from 'firebase/firestore'
@@ -16,12 +15,23 @@ import { db } from './firebase.js'
 
 const historyCollection = (uid) => collection(db, 'users', uid, 'searchHistory')
 
-/** Suscripción a las últimas búsquedas (máximo 20). */
+/** Suscripción a las últimas búsquedas (máximo 20).
+ * No usa orderBy en Firebase para evitar requerir un índice compuesto;
+ * se ordena en el cliente por createdAt descendente.
+ */
 export function subscribeSearchHistory(uid, onData, onError) {
-  const q = query(historyCollection(uid), orderBy('createdAt', 'desc'), limit(20))
+  const q = query(historyCollection(uid), limit(50))
   return onSnapshot(
     q,
-    (snapshot) => onData(snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    (snapshot) => {
+      const docs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
+      docs.sort(
+        (a, b) =>
+          (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0) ||
+          (b.createdAt?.nanoseconds ?? 0) - (a.createdAt?.nanoseconds ?? 0),
+      )
+      onData(docs.slice(0, 20))
+    },
     (error) => {
       console.warn('[Historial] Error al escuchar cambios:', error)
       onError?.(error)
