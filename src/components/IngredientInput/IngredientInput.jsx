@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from '../Icon/Icon.jsx'
 import IngredientChip from '../IngredientChip/IngredientChip.jsx'
-import { normalizeIngredientName } from '../../utils/ingredientHelpers.js'
+import { normalizeIngredientName, toApiIngredient } from '../../utils/ingredientHelpers.js'
 import { autocompleteIngredients, hasApiKey } from '../../services/spoonacular.js'
 import { translateIngredientName } from '../../services/translation.js'
 import './IngredientInput.css'
@@ -50,10 +50,17 @@ export default function IngredientInput({
     debounceRef.current = setTimeout(async () => {
       const requestId = ++requestRef.current
       try {
-        const items = await autocompleteIngredients(value, 6)
+        // Traducir la consulta de español al término que espera Spoonacular
+        const apiValue = toApiIngredient(value) || value
+        const items = await autocompleteIngredients(apiValue, 6)
+        // Traducir los nombres de vuelta al español para mostrarlos al usuario
+        const translatedItems = items.map((item) => ({
+          id: item.id,
+          name: translateIngredientName(item.name),
+        }))
         if (requestId !== requestRef.current) return // respuesta vieja: se ignora
         answeredRef.current = value
-        setSuggestionState({ query: value, items })
+        setSuggestionState({ query: value, items: translatedItems })
         setHighlight(-1)
       } catch {
         if (requestId === requestRef.current) {
