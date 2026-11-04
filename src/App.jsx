@@ -32,7 +32,6 @@ function ProtectedRoutes() {
   return <Outlet />
 }
 
-/** Rutas públicas: si ya hay sesión, se redirige a la página solicitada. */
 function GuestRoutes() {
   const { user, loading } = useAuth()
   const location = useLocation()
