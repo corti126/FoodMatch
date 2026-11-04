@@ -4,7 +4,6 @@ import {
   addDoc,
   collection,
   deleteDoc,
-  doc,
   getDocs,
   limit,
   onSnapshot,
@@ -75,5 +74,5 @@ export async function logSearch(uid, entry) {
 /** Elimina todo el historial de búsquedas del usuario. */
 export async function clearSearchHistory(uid) {
   const snapshot = await getDocs(historyCollection(uid))
-  await Promise.all(snapshot.docs.map((d) => deleteDoc(doc(d.ref))))
+  await Promise.all(snapshot.docs.map((d) => deleteDoc(d.ref)))
 }
