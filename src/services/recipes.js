@@ -3,12 +3,21 @@
  * aplica caché en memoria y conserva en memoria el contexto de la última
  * búsqueda por ingredientes (para marcar en el detalle qué se tiene o falta).
  *
+ * Todas las respuestas de Spoonacular se traducen al español (rioplatense)
+ * antes de ser devueltas, mediante la capa de traducción centralizada en
+ * src/services/translation.js. Los identificadores, URLs y cantidades
+ * numéricas se preservan intactos.
+ *
  * No se persisten datos de recetas fuera de la sesión en curso.
  */
 
 import * as api from './spoonacular.js'
 import { getCached, setCached } from '../utils/cache.js'
 import { toApiIngredient } from '../utils/ingredientHelpers.js'
+import {
+  translateRecipeResult,
+  translateRecipeDetail,
+} from './translation.js'
 
 const SEARCH_TTL = 5 * 60 * 1000 // 5 minutos
 const DETAIL_TTL = 10 * 60 * 1000 // 10 minutos
@@ -35,6 +44,7 @@ function mapIngredientResult(raw) {
     matchPercent: total > 0 ? Math.round((used.length / total) * 100) : null,
     readyInMinutes: null, // este endpoint no informa tiempos
     diets: [],
+    cuisines: Array.isArray(raw.cuisines) ? raw.cuisines : [],
   }
 }
 
@@ -63,9 +73,12 @@ export async function searchByIngredients({
     ignorePantry,
   })
 
-  const results = (data || []).map(mapIngredientResult)
+  const rawResults = (data || []).map(mapIngredientResult)
+  // Traduce cada resultado antes de devolverlo. Los IDs se preservan.
+  const results = await Promise.all(rawResults.map(translateRecipeResult))
 
   // Guarda qué ingredientes se tenían o faltaban para cada receta (en memoria).
+  // Se hace sobre los resultados traducidos: translateRecipeResult conserva el id.
   for (const recipe of results) {
     ingredientMatches.set(Number(recipe.id), {
       usedIds: new Set(recipe.usedIngredients.map((i) => i.id)),
@@ -89,7 +102,7 @@ export async function searchAdvanced(filters = {}) {
 
   const data = await api.complexSearch({ ...filters, number, offset })
 
-  const results = (data.results || []).map((raw) => ({
+  const rawResults = (data.results || []).map((raw) => ({
     id: raw.id,
     title: raw.title,
     image: raw.image || null,
@@ -105,6 +118,9 @@ export async function searchAdvanced(filters = {}) {
     matchPercent: null,
   }))
 
+  // Traduce cada resultado antes de devolverlo.
+  const results = await Promise.all(rawResults.map(translateRecipeResult))
+
   const payload = {
     results,
     totalResults: typeof data.totalResults === 'number' ? data.totalResults : null,
@@ -119,6 +135,7 @@ export async function searchAdvanced(filters = {}) {
 /**
  * Información completa de una receta (solo al abrirla).
  * Se cachea en memoria para no repetir la consulta dentro de la sesión.
+ * Se devuelve ya traducida al español.
  */
 export async function getRecipeDetail(id) {
   const cacheKey = `detail|${Number(id)}`
@@ -126,8 +143,9 @@ export async function getRecipeDetail(id) {
   if (cached) return cached
 
   const data = await api.getRecipeInformation(id)
-  setCached(cacheKey, data)
-  return data
+  const translated = await translateRecipeDetail(data)
+  setCached(cacheKey, translated)
+  return translated
 }
 
 /**
