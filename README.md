@@ -36,6 +36,21 @@ Copiá `.env.example` a `.env.local` y completá los valores:
 > expuesta por eso. Para este proyecto (presupuesto 0, uso personal/demo) es
 > aceptable, pero monitorizá el consumo y no la subas a un repo público.
 
+## Limitaciones de la API key de Spoonacular (plan gratuito)
+
+La app usa la API gratuita de Spoonacular, que tiene límites (según
+[spoonacular.com/food-api/pricing](https://spoonacular.com/food-api/pricing)):
+
+- **Cuota diaria:** 50 puntos por día. Cuando se agota, la API responde
+  **HTTP 402** hasta la medianoche UTC.
+- **Límite de velocidad:** 1 request por segundo y hasta 2 concurrentes.
+- **Costo por request:** típicamente 1 punto + 0.01 por resultado, con
+  sobrecostos para nutrición, imágenes y video.
+
+La app maneja ambos casos con mensajes en español (`Falta configurar la API key`
+y `Alcanzaste el límite de consultas`) en vez de romperse. Si el límite se agota,
+esperá hasta el día siguiente o conseguí tu propia clave en spoonacular.com.
+
 `.env.local` está en `.gitignore` y nunca se commitea.
 
 ## Setup
@@ -62,6 +77,26 @@ npm run preview  # sirve el build de dist/
    ```
 4. **Hosting**: ya asociado al sitio `lacartadehoy`
    (`https://lacartadehoy.web.app`). Desplegar con `npm run build && firebase deploy --only hosting`.
+
+## CI / GitHub Actions
+
+Hay tres workflows en `.github/workflows/`:
+
+- **`ci.yml`**: corre `npm run lint` y `npm run build` en cada push a `main` y en cada PR.
+- **`firebase-hosting-merge.yml`**: despliega a Hosting (canal `live`) al mergear en `main`.
+- **`firebase-hosting-pull-request.yml`**: despliega un canal de preview por PR.
+
+Para que el build incluya la clave de Spoonacular (y que las búsquedas funcionen en el
+sitio desplegado), agregá el secreto en GitHub:
+
+**Settings → Secrets and variables → Actions → New repository secret**
+
+| Nombre del secreto | Valor |
+| --- | --- |
+| `VITE_SPOONACULAR_API_KEY` | Tu clave de Spoonacular |
+
+> Si no agregás el secreto, el build igual funciona, pero la app mostrará el aviso
+> "Falta configurar la API key" en las búsquedas (estado honesto, no roto).
 
 ## Estructura
 
