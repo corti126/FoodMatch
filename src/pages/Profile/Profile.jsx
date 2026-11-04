@@ -97,13 +97,24 @@ export default function Profile() {
   }
 
   const handleClearHistory = async () => {
+    if (!user?.uid) {
+      setHistoryState((current) => ({
+        ...current,
+        error: new Error('Sesión requerida'),
+      }))
+      return
+    }
+
     try {
       await clearSearchHistory(user.uid)
+      // Resetear inmediatamente para que la UI refleje el borrado sin esperar
+      // al listener de Firestore.
+      setHistoryState({ uid: user.uid, entries: [], error: null })
       setConfirmClear(false)
     } catch {
       setHistoryState((current) => ({
         ...current,
-        error: new Error('clear-failed'),
+        error: new Error('No se pudo borrar el historial. Intentá de nuevo.'),
       }))
     }
   }
