@@ -6,6 +6,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "site": "lacartadehoy",
     "public": "dist",
     "ignore": [
       "firebase.json",
@@ -24,7 +25,7 @@
       "anonymous": true,
       "emailPassword": true,
       "googleSignIn": {
-        "oAuthBrandDisplayName": "foodmatch-6e80a",
+        "oAuthBrandDisplayName": "lacartadehoy",
         "supportEmail": "support@foodmatch-6e80a.firebaseapp.com"
       }
     }
