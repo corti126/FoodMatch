@@ -11,7 +11,7 @@
  * (tienen diccionario propio), ni valores utilizados internamente para búsquedas.
  *
  * El modelo local se carga de forma perezosa y no bloqueante: la aplicación
- * sigue funcionando con solo diccionarios mientras se descarga (si se descarga).
+ * sigue funcionando con solo diccionarios mientras se descarga.
  */
 
 import {
@@ -97,6 +97,9 @@ function translateWithDictionaries(text) {
 let translationModel = null
 let modelLoadPromise = null
 let modelFailed = false
+let modelLoadError = null
+
+const MODEL_LOAD_TIMEOUT = 60000 // 60 segundos máximo para cargar el modelo
 
 async function ensureModelLoaded() {
   if (translationModel) return translationModel
@@ -105,17 +108,23 @@ async function ensureModelLoaded() {
 
   modelLoadPromise = (async () => {
     try {
-      // Carga completamente dinámica: Vite no resuelve este import en build
-      // time, por lo que la app compila aunque @huggingface/transformers no
-      // esté instalado. En runtime, si el paquete falta, se usa solo diccionarios.
-      const mod = await new Function(
-        'return import("@huggingface/transformers")',
-      )()
+      // Import dinámico: Vite lo maneja como chunk separado, no lo resuelve
+      // en build time. Si @huggingface/transformers no está instalado,
+      // falla aquí y se usa solo diccionarios.
+      const mod = await import('@huggingface/transformers')
       const { pipeline } = mod
-      translationModel = await pipeline('translation', 'Xenova/opus-mt-en-es')
+
+      // Cargar el modelo con timeout para no esperar indefinidamente
+      const loadPromise = pipeline('translation', 'Xenova/opus-mt-en-es')
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout cargando modelo de traducción')), MODEL_LOAD_TIMEOUT)
+      )
+
+      translationModel = await Promise.race([loadPromise, timeoutPromise])
       return translationModel
     } catch (err) {
       modelFailed = true
+      modelLoadError = err.message
       console.warn(
         '[translation] No se pudo cargar el modelo local de traducción. ' +
           'Se usará solo diccionarios. Detalle:',
@@ -130,8 +139,6 @@ async function ensureModelLoaded() {
 
 // ---------------------------------------------------------------------------
 // Protección de cantidades y números en texto libre.
-// Reemplaza patrones como "2 cups" por placeholders para que el modelo
-// no intente traducir el número ni rompa la unidad.
 // ---------------------------------------------------------------------------
 const QTY_REGEX =
   /(\d+(?:\.\d+)?(?:\s*\/\s*\d+(?:\.\d+)?)?)\s*(cups?|tablespoons?|teaspoons?|ounces?|pounds?|grams?|kilograms?|milliliters?|liters?|ml|l|oz|lb|lbs|kg|g|pieces?|slices?|cloves?|pinches?|dashes?|cans?|bottles?|jars?|packages?|bags?)/gi
@@ -150,7 +157,6 @@ function restoreQuantities(text, placeholders) {
   return text.replace(/__QTY(\d+)__/g, (_, index) => placeholders[Number(index)])
 }
 
-// Protección de números sueltos (ej. temperaturas, tiempos)
 const NUMBER_REGEX = /\b\d+(?:\.\d+)?\b/g
 
 function protectNumbers(text) {
@@ -190,8 +196,6 @@ async function translateFreeText(text) {
   const model = await ensureModelLoaded()
   if (model) {
     try {
-      // Dividir en oraciones para no exceder límites de tokens y traducir
-      // cada una por separado, preservando cantidades.
       const sentences = splitSentences(trimmed)
       const translatedSentences = await Promise.all(
         sentences.map(async (sentence) => {
@@ -336,37 +340,26 @@ export async function translateRecipeDetail(rawDetail) {
 // Utilidades expuestas.
 // ---------------------------------------------------------------------------
 
-/** Traduce un nombre de nutriente, manteniendo valor y unidad originales. */
 export function translateNutrientName(name) {
   return translateNutrient(name)
 }
 
-/** Traduce una lista de intolerancias. */
 export function translateIntolerances(list = []) {
   return list.map((i) => translateIntolerance(i))
 }
 
-/** Traduce una lista de dietas. */
 export function translateDiets(list = []) {
   return list.map((d) => translateDiet(d))
 }
 
-/** Traduce una lista de cocinas. */
 export function translateCuisines(list = []) {
   return list.map((c) => translateCuisine(c))
 }
 
-/** Limpia el caché de traducciones. Útil para pruebas o cambio de idioma. */
 export function clearTranslationCache() {
   translationCache.clear()
 }
 
-/**
- * Devuelve textos que no pudieron traducirse mediante diccionario.
- * Útil para ampliar los diccionarios posteriormente.
- * @param {Array} recipes - recetas ya procesadas (con título en español si se tradujo)
- * @returns {Array<string>} textos en inglés que aún quedan sin traducir
- */
 export function findUntranslatedTexts(recipes = []) {
   const untranslated = new Set()
   const englishLike = /[a-zA-Z]{4,}/
@@ -383,17 +376,14 @@ export function findUntranslatedTexts(recipes = []) {
   return Array.from(untranslated)
 }
 
-/**
- * Indica si el modelo local de traducción está disponible.
- * Útil para mostrar un estado discreto en la UI.
- */
 export function isModelAvailable() {
   return Boolean(translationModel)
 }
 
-/**
- * Indica si el modelo está cargándose.
- */
 export function isModelLoading() {
   return Boolean(modelLoadPromise) && !translationModel
+}
+
+export function getModelLoadError() {
+  return modelLoadError
 }
