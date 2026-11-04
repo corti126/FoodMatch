@@ -1,3 +1,5 @@
+import { translateCookingTerm } from './cookingTerms.js'
+
 /**
  * Diccionario de ingredientes: inglés → español (rioplatense/argentino).
  * Claves en minúsculas, sin acentos para búsqueda normalizada.
@@ -167,6 +169,24 @@ export const INGREDIENTS = {
 
 export function translateIngredientName(name) {
   if (!name || typeof name !== 'string') return name
+
   const key = name.toLowerCase().trim().replace(/\s+/g, ' ')
-  return INGREDIENTS[key] || name
+
+  // 1. Coincidencia exacta en el diccionario de ingredientes
+  if (INGREDIENTS[key]) return INGREDIENTS[key]
+
+  // 2. Nombre compuesto: dividir en palabras y traducir cada una
+  const words = key.split(' ')
+  const translatedWords = words.map((word) => {
+    // Intentar traducir como ingrediente simple
+    if (INGREDIENTS[word]) return INGREDIENTS[word]
+    // Intentar traducir como término culinario (all-purpose, boneless, etc.)
+    return translateCookingTerm(word) || word
+  })
+
+  const result = translatedWords.join(' ')
+
+  // Si al menos una palabra se tradujo, devolver el resultado
+  // Si ninguna cambió, devolver el original
+  return result !== key ? result : name
 }

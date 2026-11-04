@@ -235,17 +235,33 @@ function splitSentences(text) {
 // ---------------------------------------------------------------------------
 // Traducción de un ingrediente individual (nombre, unidad, meta).
 // ---------------------------------------------------------------------------
-export function translateIngredient(ingredient) {
+export async function translateIngredient(ingredient) {
   if (!ingredient || typeof ingredient !== 'object') return ingredient
 
   const cacheKey = `ing:${ingredient.id ?? ingredient.name}`
   const cached = cacheGet(cacheKey)
   if (cached) return cached
 
+  const translatedName = translateIngredientName(ingredient.name)
+  // Si el diccionario no tradujo nada y el nombre tiene texto en inglés,
+  // intentar con el modelo local como fallback
+  let finalName = translatedName
+  if (translatedName === ingredient.name && /[a-zA-Z]{4,}/.test(ingredient.name)) {
+    const model = await ensureModelLoaded()
+    if (model) {
+      try {
+        const result = await model(ingredient.name, { max_length: 128 })
+        finalName = result[0]?.translation_text || ingredient.name
+      } catch {
+        // silencioso: usar nombre del diccionario o original
+      }
+    }
+  }
+
   const translated = {
     ...ingredient,
     unit: translateUnit(ingredient.unit) || ingredient.unit,
-    name: translateIngredientName(ingredient.name),
+    name: finalName,
     meta: (ingredient.meta || []).map((m) => translateCookingTerm(m) || m),
   }
 
@@ -266,9 +282,11 @@ export async function translateRecipeResult(rawRecipe) {
   const translated = {
     ...rawRecipe,
     title: await translateFreeText(rawRecipe.title),
-    usedIngredients: (rawRecipe.usedIngredients || []).map(translateIngredient),
-    missingIngredients: (rawRecipe.missingIngredients || []).map(
-      translateIngredient,
+    usedIngredients: await Promise.all(
+      (rawRecipe.usedIngredients || []).map(translateIngredient),
+    ),
+    missingIngredients: await Promise.all(
+      (rawRecipe.missingIngredients || []).map(translateIngredient),
     ),
     cuisines: (rawRecipe.cuisines || []).map((c) => translateCuisine(c)),
     diets: (rawRecipe.diets || []).map((d) => translateDiet(d)),
@@ -288,8 +306,8 @@ export async function translateRecipeDetail(rawDetail) {
   const cached = cacheGet(cacheKey)
   if (cached) return cached
 
-  const extendedIngredients = (rawDetail.extendedIngredients || []).map(
-    translateIngredient,
+  const extendedIngredients = await Promise.all(
+    (rawDetail.extendedIngredients || []).map(translateIngredient),
   )
 
   let analyzedInstructions = null
