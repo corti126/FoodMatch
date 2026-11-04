@@ -3,6 +3,7 @@ import Icon from '../Icon/Icon.jsx'
 import IngredientChip from '../IngredientChip/IngredientChip.jsx'
 import { normalizeIngredientName } from '../../utils/ingredientHelpers.js'
 import { autocompleteIngredients, hasApiKey } from '../../services/spoonacular.js'
+import { translateIngredientName } from '../../services/translation.js'
 import './IngredientInput.css'
 
 const DEBOUNCE_MS = 350
@@ -99,7 +100,7 @@ export default function IngredientInput({
     if (event.key === 'Enter') {
       event.preventDefault()
       if (highlight >= 0 && suggestions[highlight]) {
-        addIngredient(suggestions[highlight].name)
+        addIngredient(translateIngredientName(suggestions[highlight].name))
       } else {
         addIngredient(query)
       }
@@ -187,10 +188,10 @@ export default function IngredientInput({
                     : 'ingredient-input__suggestion'
                 }
                 onMouseDown={(event) => event.preventDefault()}
-                onClick={() => addIngredient(item.name)}
+                onClick={() => addIngredient(translateIngredientName(item.name))}
               >
                 <Icon name="plus" size={15} />
-                <span>{item.name}</span>
+                <span>{translateIngredientName(item.name)}</span>
               </button>
             </li>
           ))}

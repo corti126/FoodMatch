@@ -17,6 +17,7 @@
 import {
   translateIngredientName,
 } from '../data/translations/ingredients.js'
+export { translateIngredientName }
 import { translateUnit } from '../data/translations/units.js'
 import { translateCuisine } from '../data/translations/cuisines.js'
 import { translateMealType } from '../data/translations/mealTypes.js'
@@ -289,13 +290,21 @@ export async function translateRecipeDetail(rawDetail) {
 
   let analyzedInstructions = null
   if (rawDetail.analyzedInstructions) {
-    analyzedInstructions = rawDetail.analyzedInstructions.map((section) => ({
-      ...section,
-      steps: (section.steps || []).map((step) => ({
-        ...step,
-        step: translateFreeText(step.step),
-      })),
-    }))
+    analyzedInstructions = await Promise.all(
+      rawDetail.analyzedInstructions.map(async (section) => {
+        return {
+          ...section,
+          steps: await Promise.all(
+            (section.steps || []).map(async (step) => {
+              return {
+                ...step,
+                step: await translateFreeText(step.step),
+              }
+            }),
+          ),
+        }
+      }),
+    )
   }
 
   let instructions = null
