@@ -1,0 +1,29 @@
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: var(--space-5);
+}
+
+/* ---------- Skeleton de tarjeta ---------- */
+
+.recipe-card--skeleton {
+  pointer-events: none;
+}
+
+.recipe-card--skeleton:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.recipe-card__skeleton-media {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  border-radius: 0;
+}
+
+.recipe-card__skeleton-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--space-4);
+}

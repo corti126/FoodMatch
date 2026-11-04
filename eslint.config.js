@@ -18,4 +18,18 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    // Módulos de lógica (contextos, hooks, servicios, utilidades): no exportan
+    // componentes, por lo que la regla de fast-refresh no aplica.
+    files: [
+      'src/context/**/*.{js,jsx}',
+      'src/hooks/**/*.{js,jsx}',
+      'src/services/**/*.js',
+      'src/utils/**/*.js',
+      'src/config/**/*.js',
+    ],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

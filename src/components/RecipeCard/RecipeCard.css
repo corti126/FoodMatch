@@ -1,0 +1,216 @@
+.recipe-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow var(--transition), transform var(--transition),
+    border-color var(--transition);
+}
+
+.recipe-card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.recipe-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.recipe-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.recipe-card:hover .recipe-card__image {
+  transform: scale(1.03);
+}
+
+.recipe-card__image--placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--text-3);
+}
+
+.recipe-card__time {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(38, 36, 31, 0.78);
+  color: #fff;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.recipe-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--space-4);
+  flex: 1;
+}
+
+.recipe-card__title {
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.recipe-card__title a:hover {
+  color: var(--primary);
+}
+
+/* ---------- Coincidencia ---------- */
+
+.recipe-card__match {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.recipe-card__match-bar {
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.recipe-card__match-bar span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.recipe-card__match-text {
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.recipe-card__match-text strong {
+  color: var(--primary);
+}
+
+/* ---------- Ingredientes ---------- */
+
+.recipe-card__ingredients {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipe-card__ingredient-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.recipe-card__ingredient-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+.recipe-card__ingredient-label--missing {
+  color: var(--accent);
+}
+
+.recipe-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.recipe-card__chip {
+  padding: 2px 9px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipe-card__chip--missing {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.recipe-card__chip--more {
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+
+.recipe-card__ready {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.recipe-card__error {
+  font-size: 0.78rem;
+  color: var(--danger);
+}
+
+/* ---------- Acciones ---------- */
+
+.recipe-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.recipe-card__fav {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-3);
+  background: var(--surface);
+  transition: color var(--transition), border-color var(--transition),
+    background var(--transition);
+}
+
+.recipe-card__fav:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.recipe-card__fav--active {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.recipe-card__fav--active svg {
+  fill: currentColor;
+}

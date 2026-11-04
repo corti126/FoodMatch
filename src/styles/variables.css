@@ -1,0 +1,74 @@
+/* =========================================================
+   Variables globales del diseño
+   Paleta: neutros cálidos + verde oliva (gastronomía)
+   ========================================================= */
+
+:root {
+  /* --- Colores base --- */
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface-2: #f1eee7;
+  --surface-3: #e9e5db;
+  --border: #e5e1d6;
+  --border-strong: #d6d1c3;
+
+  /* --- Texto --- */
+  --text: #26241f;
+  --text-2: #5f5b52;
+  --text-3: #8b867b;
+
+  /* --- Marca (verde oliva) --- */
+  --primary: #4f6134;
+  --primary-hover: #42522c;
+  --primary-soft: #eef1e6;
+  --primary-soft-2: #e2e8d5;
+
+  /* --- Acentos --- */
+  --accent: #b4623a;
+  --accent-soft: #f7ece5;
+  --danger: #a8402f;
+  --danger-soft: #f8ebe8;
+  --warning: #8a6a1c;
+  --warning-soft: #f7f0dd;
+  --success: #4f6134;
+  --success-soft: #eef1e6;
+
+  /* --- Tipografía --- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
+  /* --- Radios --- */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* --- Sombras (sutiles) --- */
+  --shadow-sm: 0 1px 2px rgba(38, 36, 31, 0.05);
+  --shadow: 0 4px 14px rgba(38, 36, 31, 0.07);
+  --shadow-lg: 0 14px 34px rgba(38, 36, 31, 0.12);
+
+  /* --- Espaciado --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* --- Layout --- */
+  --sidebar-width: 244px;
+  --header-height: 62px;
+  --bottom-nav-height: 64px;
+  --content-max: 1180px;
+
+  /* --- Transiciones --- */
+  --transition: 160ms ease;
+  --transition-slow: 260ms ease;
+}

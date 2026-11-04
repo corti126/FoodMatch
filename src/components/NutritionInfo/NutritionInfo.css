@@ -1,0 +1,52 @@
+.nutrition__scope {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  margin-bottom: var(--space-4);
+}
+
+.nutrition__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.nutrition__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+
+.nutrition__item--highlight {
+  background: var(--primary-soft);
+}
+
+.nutrition__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-2);
+}
+
+.nutrition__value {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.nutrition__value small {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-left: 3px;
+}
+
+.nutrition__dv {
+  font-size: 0.72rem;
+  color: var(--text-3);
+}

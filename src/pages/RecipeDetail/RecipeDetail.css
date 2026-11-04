@@ -1,0 +1,298 @@
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-2);
+  padding: 4px 0;
+  transition: color var(--transition);
+}
+
+.detail__back:hover {
+  color: var(--primary);
+}
+
+/* ---------- Hero ---------- */
+
+.detail__hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+@media (min-width: 820px) {
+  .detail__hero {
+    grid-template-columns: minmax(0, 44%) minmax(0, 1fr);
+  }
+}
+
+.detail__media {
+  min-height: 240px;
+  background: var(--surface-2);
+}
+
+.detail__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: 240px;
+}
+
+.detail__image--placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--text-3);
+}
+
+.detail__skeleton-media {
+  width: 100%;
+  min-height: 240px;
+  border-radius: 0;
+}
+
+.detail__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+}
+
+.detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge-muted {
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+
+.detail__title {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.detail__summary {
+  font-size: 0.925rem;
+  color: var(--text-2);
+}
+
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.detail__fav-error {
+  font-size: 0.8rem;
+  color: var(--danger);
+}
+
+/* ---------- Secciones ---------- */
+
+.detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detail__section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.detail__servings {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.detail__servings-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.detail__servings-btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  font-size: 1.05rem;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.detail__servings-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.detail__servings-value {
+  min-width: 24px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.detail__scaled-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  background: var(--warning-soft);
+  border: 1px solid #eadfbf;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  color: var(--text-2);
+}
+
+/* ---------- Ingredientes ---------- */
+
+.detail__ingredients {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+
+@media (min-width: 720px) {
+  .detail__ingredients {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-6);
+  }
+}
+
+.detail__ingredient {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: 0.925rem;
+}
+
+.detail__ingredient-state {
+  flex-shrink: 0;
+  min-width: 54px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+
+.detail__ingredient-state--owned {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.detail__ingredient-state--missing {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.detail__ingredient-amount {
+  flex-shrink: 0;
+  min-width: 86px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.detail__ingredient-name {
+  color: var(--text-2);
+}
+
+.detail__ingredient-name small {
+  color: var(--text-3);
+}
+
+.detail__missing {
+  font-size: 0.9rem;
+  color: var(--text-3);
+  font-style: italic;
+}
+
+/* ---------- Pasos ---------- */
+
+.detail__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detail__step {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.detail__step-number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.detail__step p {
+  font-size: 0.95rem;
+  color: var(--text);
+  padding-top: 3px;
+}
+
+/* ---------- Pie ---------- */
+
+.detail__footer {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  text-align: center;
+  padding-bottom: var(--space-4);
+}
+
+.detail__footer a {
+  color: var(--text-2);
+  text-decoration: underline;
+}
+
+.detail__footer a:hover {
+  color: var(--primary);
+}

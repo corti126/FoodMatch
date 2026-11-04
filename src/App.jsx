@@ -1,122 +1,93 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext.jsx'
+import { useAuth } from './hooks/useAuth.js'
+import { FavoritesProvider } from './context/FavoritesContext.jsx'
+import { PantryProvider } from './context/PantryContext.jsx'
+import AppLayout from './components/AppLayout/AppLayout.jsx'
+import AuthLayout from './components/AuthLayout/AuthLayout.jsx'
+import Loading from './components/Loading/Loading.jsx'
+import { APP_NAME } from './config/app.js'
+import './styles/variables.css'
+import './styles/global.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// Lazy loading de páginas: se cargan solo cuando se necesitan.
+const Home = lazy(() => import('./pages/Home/Home.jsx'))
+const RecipeSearch = lazy(() => import('./pages/RecipeSearch/RecipeSearch.jsx'))
+const RecipeDetail = lazy(() => import('./pages/RecipeDetail/RecipeDetail.jsx'))
+const Pantry = lazy(() => import('./pages/Pantry/Pantry.jsx'))
+const Favorites = lazy(() => import('./pages/Favorites/Favorites.jsx'))
+const Profile = lazy(() => import('./pages/Profile/Profile.jsx'))
+const Login = lazy(() => import('./pages/Login/Login.jsx'))
+const Register = lazy(() => import('./pages/Register/Register.jsx'))
+const NotFound = lazy(() => import('./pages/NotFound/NotFound.jsx'))
 
+/** Rutas privadas: requieren sesión iniciada. */
+function ProtectedRoutes() {
+  const { user, loading } = useAuth()
+  const location = useLocation()
+
+  if (loading) return <Loading fullScreen label="Cargando tu cuenta..." />
+  if (!user) return <Navigate to="/ingresar" replace state={{ from: location }} />
+  return <Outlet />
+}
+
+/** Rutas públicas: si ya hay sesión, se redirige a la página solicitada. */
+function GuestRoutes() {
+  const { user, loading } = useAuth()
+  const location = useLocation()
+
+  if (loading) return <Loading fullScreen label="Cargando..." />
+  if (user) {
+    const from = location.state?.from
+    const target = from ? `${from.pathname}${from.search || ''}` : '/'
+    return <Navigate to={target} replace />
+  }
+  return <Outlet />
+}
+
+function AppRoutes() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get starting123</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Suspense fallback={<Loading fullScreen label="Cargando..." />}>
+      <Routes>
+        <Route element={<GuestRoutes />}>
+          <Route element={<AuthLayout />}>
+            <Route path="/ingresar" element={<Login />} />
+            <Route path="/registro" element={<Register />} />
+          </Route>
+        </Route>
 
-      <div className="ticks"></div>
+        <Route element={<ProtectedRoutes />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/buscar" element={<RecipeSearch />} />
+            <Route path="/receta/:id" element={<RecipeDetail />} />
+            <Route path="/despensa" element={<Pantry />} />
+            <Route path="/favoritos" element={<Favorites />} />
+            <Route path="/perfil" element={<Profile />} />
+          </Route>
+        </Route>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   )
 }
 
-export default App
+export default function App() {
+  useEffect(() => {
+    document.title = APP_NAME
+  }, [])
+
+  return (
+    <AuthProvider>
+      <FavoritesProvider>
+        <PantryProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </PantryProvider>
+      </FavoritesProvider>
+    </AuthProvider>
+  )
+}

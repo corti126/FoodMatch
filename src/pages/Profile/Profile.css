@@ -1,0 +1,252 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ---------- Cuenta ---------- */
+
+.profile__account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.profile__avatar {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.profile__account-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.profile__email {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  word-break: break-all;
+}
+
+/* ---------- Secciones ---------- */
+
+.profile__section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile__section-head--row {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.profile__section-hint {
+  font-size: 0.83rem;
+  color: var(--text-3);
+  max-width: 60ch;
+}
+
+.profile__preferences,
+.profile__history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ---------- Fieldsets ---------- */
+
+.profile__fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.profile__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile__nutrition {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .profile__nutrition {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.profile__radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.profile__radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.profile__radio input {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+.profile__toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.profile__toggle input {
+  margin-top: 3px;
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+.profile__toggle span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-weight: 600;
+}
+
+.profile__toggle small {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.profile__save-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- Historial ---------- */
+
+.profile__history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.profile__history-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.profile__history-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.profile__history-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.profile__history-icon--avanzada {
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+
+.profile__history-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__history-term {
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.profile__history-meta {
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+
+.profile__history-empty {
+  font-size: 0.9rem;
+  color: var(--text-3);
+}
+
+.profile__confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+/* ---------- Privacidad ---------- */
+
+.profile__privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: var(--space-4);
+  background: var(--primary-soft);
+  border-radius: var(--radius);
+  font-size: 0.83rem;
+  color: var(--text-2);
+}
+
+.profile__privacy svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--primary);
+}

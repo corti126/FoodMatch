@@ -1,0 +1,146 @@
+.recipe-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.recipe-filters__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.recipe-filters__title {
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.recipe-filters__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .recipe-filters__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.recipe-filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition),
+    border-color var(--transition);
+  user-select: none;
+}
+
+.filter-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.filter-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.filter-chip--active {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.filter-chip--active::before {
+  content: '✓';
+  font-size: 0.8rem;
+}
+
+.recipe-filters__hint {
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+
+/* ---------- Nutrición ---------- */
+
+.recipe-filters__nutrition {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 720px) {
+  .recipe-filters__nutrition {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.recipe-filters__nutrition-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recipe-filters__nutrition-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.recipe-filters__nutrition-label small {
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.recipe-filters__nutrition-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recipe-filters__nutrition-inputs .field {
+  flex: 1;
+}
+
+.recipe-filters__dash {
+  color: var(--text-3);
+}
+
+/* ---------- Acciones ---------- */
+
+.recipe-filters__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 480px) {
+  .recipe-filters__actions .btn {
+    flex: 1;
+  }
+}

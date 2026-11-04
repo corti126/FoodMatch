@@ -1,0 +1,35 @@
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--danger-soft);
+  border: 1px solid #f0d5cf;
+  border-radius: var(--radius);
+}
+
+.error-message__icon {
+  color: var(--danger);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.error-message__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.error-message__title {
+  font-weight: 600;
+  font-size: 0.925rem;
+}
+
+.error-message__text {
+  margin-top: 2px;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.error-message .btn {
+  flex-shrink: 0;
+}

@@ -1,18 +1,118 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2026, 12, 4);
+
+    // --- Utilidades -------------------------------------------------
+
+    function isSignedIn() {
+      return request.auth != null;
     }
+
+    // Cada usuario solo puede acceder a sus propios datos (users/{uid}).
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // --- Perfil del usuario -----------------------------------------
+
+    match /users/{uid} {
+      allow read, update, delete: if isOwner(uid);
+
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'displayName', 'createdAt', 'updatedAt'])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 80
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+
+      // --- Preferencias alimentarias y de búsqueda -------------------
+      match /preferences/{docId} {
+        allow read: if isOwner(uid);
+
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(
+               ['diets', 'intolerances', 'nutrition', 'units', 'applyToSearch', 'updatedAt'])
+          && request.resource.data.diets is list
+          && request.resource.data.diets.size() <= 10
+          && request.resource.data.intolerances is list
+          && request.resource.data.intolerances.size() <= 15
+          && request.resource.data.nutrition is map
+          && request.resource.data.units in ['metrico', 'imperial']
+          && request.resource.data.applyToSearch is bool
+          && request.resource.data.updatedAt is timestamp;
+
+        allow delete: if isOwner(uid);
+      }
+
+      // --- Despensa --------------------------------------------------
+      match /pantry/{itemId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && validPantry(request.resource.data);
+        allow delete: if isOwner(uid);
+      }
+
+      // --- Favoritos (datos mínimos de la receta) ---------------------
+      match /favorites/{recipeId} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid) && validFavorite(request.resource.data);
+        allow delete: if isOwner(uid);
+      }
+
+      // --- Historial de búsquedas -------------------------------------
+      match /searchHistory/{searchId} {
+        allow read: if isOwner(uid);
+        allow create: if isOwner(uid) && validSearch(request.resource.data);
+        allow delete: if isOwner(uid);
+      }
+    }
+
+    // --- Denegado por defecto todo lo demás --------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+
+  // --- Validaciones de datos --------------------------------------------
+  // Se aplican en el servidor, además de la validación del frontend.
+
+  function validPantry(d) {
+    return d.keys().hasOnly(['name', 'quantity', 'unit', 'category', 'notes', 'expiresAt', 'addedAt'])
+      && d.name is string
+      && d.name.size() > 0
+      && d.name.size() <= 120
+      && (d.quantity == null || d.quantity is number)
+      && d.unit is string
+      && d.unit.size() <= 40
+      && d.category is string
+      && d.category.size() <= 60
+      && d.notes is string
+      && d.notes.size() <= 300
+      && (d.expiresAt == null || d.expiresAt is string)
+      && d.addedAt is timestamp;
+  }
+
+  function validFavorite(d) {
+    return d.keys().hasOnly(['id', 'title', 'image', 'readyInMinutes', 'savedAt'])
+      && d.id is int
+      && d.title is string
+      && d.title.size() > 0
+      && d.title.size() <= 300
+      && (d.image == null || d.image is string)
+      && (d.readyInMinutes == null || d.readyInMinutes is number)
+      && d.savedAt is timestamp;
+  }
+
+  function validSearch(d) {
+    return d.keys().hasOnly(['type', 'term', 'summary', 'params', 'createdAt'])
+      && d.type in ['ingredientes', 'avanzada']
+      && d.term is string
+      && d.term.size() <= 200
+      && d.summary is string
+      && d.summary.size() <= 300
+      && (d.params == null || d.params is map)
+      && d.createdAt is timestamp;
   }
 }

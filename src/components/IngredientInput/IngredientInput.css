@@ -1,0 +1,103 @@
+.ingredient-input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ingredient-input__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ingredient-input__icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.ingredient-input__control {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.ingredient-input__clear {
+  position: absolute;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: var(--text-3);
+  transition: background var(--transition), color var(--transition);
+}
+
+.ingredient-input__clear:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.ingredient-input__suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 25;
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.ingredient-input__suggestion {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--text);
+  text-align: left;
+  text-transform: capitalize;
+  transition: background var(--transition);
+}
+
+.ingredient-input__suggestion:hover,
+.ingredient-input__suggestion--active {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.ingredient-input__suggestion--muted {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.ingredient-input__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.ingredient-input__clear-all {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-3);
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition);
+}
+
+.ingredient-input__clear-all:hover {
+  color: var(--danger);
+}
